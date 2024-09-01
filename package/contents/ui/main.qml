@@ -563,8 +563,10 @@ PlasmoidItem {
         onTriggered: {
             btn = qsTr('Single clicked')
             if (mouseButton === Qt.MiddleButton) {
-                printLog `Middle button pressed`
-                runAction(middleClickAction,middleClickCommand,middleClickAppUrl)
+                if (!touchFriendly) {
+                    printLog `Middle button pressed`
+                    runAction(middleClickAction,middleClickCommand,middleClickAppUrl)
+                }
             } else {
                 printLog `Left button pressed`
                 runAction(singleClickAction,singleClickCommand,singleClickAppUrl)
@@ -606,6 +608,9 @@ PlasmoidItem {
         property int wheelDelta: 0
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
         onWheel: (event) => {
+            if (touchFriendly) {
+                return
+            }
             // TODO: Different sensitivity per device type
             const delta = (event.inverted ? -1 : 1) * (event.angleDelta.y ? event.angleDelta.y : -event.angleDelta.x);
             wheelDelta += delta;
