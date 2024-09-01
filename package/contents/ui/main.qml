@@ -559,7 +559,7 @@ PlasmoidItem {
 
     Timer {
         id: singleTapTimer
-        interval: doubleClickAllowed ? 300 : 1
+        interval: doubleClickAllowed ? 300 : 3
         onTriggered: {
             btn = qsTr('Single clicked')
             if (mouseButton === Qt.MiddleButton) {
@@ -585,8 +585,8 @@ PlasmoidItem {
         }
 
         onDoubleTapped: {
-            singleTapTimer.stop()
             if (doubleClickAllowed) {
+                singleTapTimer.stop()
                 printLog `Double tap detected!`
                 btn = qsTr('Double clicked')
                 runAction(doubleClickAction,doubleClickCommand,doubleClickAppUrl)
