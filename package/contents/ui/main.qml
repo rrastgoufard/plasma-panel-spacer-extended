@@ -130,6 +130,9 @@ PlasmoidItem {
     property bool enableDebug: plasmoid.configuration.enableDebug
     property bool showTooltip: plasmoid.configuration.showTooltip
     property bool isContinuous: plasmoid.configuration.isContinuous
+    property bool doubleClickAllowed: plasmoid.configuration.doubleClickAllowed
+    property bool touchFriendly: plasmoid.configuration.touchFriendly
+    
     property bool hideTooltip: false // hide tooltip after action
     property bool showHoverBg: plasmoid.configuration.showHoverBg
     property int hoverBgRadius: plasmoid.configuration.hoverBgRadius
@@ -556,7 +559,7 @@ PlasmoidItem {
 
     Timer {
         id: singleTapTimer
-        interval: isContinuous? 1 : 300
+        interval: doubleClickAllowed ? 300 : 1
         onTriggered: {
             btn = qsTr('Single clicked')
             if (mouseButton === Qt.MiddleButton) {
@@ -583,7 +586,7 @@ PlasmoidItem {
 
         onDoubleTapped: {
             singleTapTimer.stop()
-            if (!isContinuous) {
+            if (doubleClickAllowed) {
                 printLog `Double tap detected!`
                 btn = qsTr('Double clicked')
                 runAction(doubleClickAction,doubleClickCommand,doubleClickAppUrl)

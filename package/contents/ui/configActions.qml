@@ -53,6 +53,8 @@ KCM.SimpleKCM {
     property alias cfg_showTooltip: showTooltip.checked
     property alias cfg_scrollSensitivity: scrollSensitivity.value
     property alias cfg_isContinuous: isContinuous.checked
+    property alias cfg_doubleClickAllowed: doubleClickAllowed.checked
+    property alias cfg_touchFriendly: touchFriendly.checked
 
     property bool isLoading: true
 
@@ -231,7 +233,35 @@ KCM.SimpleKCM {
                 KCM.ContextualHelpButton {
                     toolTipText: "When continuous, disable discrete drag events and fire them continuously on mouse movement.  Note that only left/right drag are allowed, not up/down.  Also disable double click for higher single click response speed."
                 }                
-            }            
+            }     
+            
+            RowLayout {
+                Kirigami.FormData.label: i18n("Double Click:")
+
+                CheckBox {
+                    id: doubleClickAllowed
+                    checked: cfg_doubleClickAllowed
+                    onCheckedChanged: {
+                        cfg_doubleClickAllowed = checked
+                    }
+                    text: i18n("Enable double click action.")
+                }
+            } 
+            
+            RowLayout {
+                Kirigami.FormData.label: i18n("Touch Friendly:")
+
+                CheckBox {
+                    id: touchFriendly
+                    checked: cfg_touchFriendly
+                    onCheckedChanged: {
+                        cfg_touchFriendly = checked
+                    }
+                    text: i18n("Primary click only (no wheel, no middle click)")
+                }
+            }               
+            
+            
         }
         Button {
             text: i18n("Refresh actions")
@@ -258,7 +288,7 @@ KCM.SimpleKCM {
             }
 
             Components.GroupedActions {
-                visible: !cfg_isContinuous
+                visible: cfg_doubleClickAllowed
                 id: doubleClick
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "doubleClickAction"
@@ -268,6 +298,7 @@ KCM.SimpleKCM {
             }
 
             Components.GroupedActions {
+                visible: !cfg_touchFriendly
                 id: middleClick
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "middleClickAction"
@@ -278,6 +309,7 @@ KCM.SimpleKCM {
 
 
             Components.GroupedActions {
+                visible: !cfg_touchFriendly
                 id: wheelUp
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "mouseWheelUpAction"
@@ -288,6 +320,7 @@ KCM.SimpleKCM {
 
 
             Components.GroupedActions {
+                visible: !cfg_touchFriendly
                 id: wheelDown
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "mouseWheelDownAction"
