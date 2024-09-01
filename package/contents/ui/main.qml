@@ -129,6 +129,7 @@ PlasmoidItem {
 
     property bool enableDebug: plasmoid.configuration.enableDebug
     property bool showTooltip: plasmoid.configuration.showTooltip
+    property bool isContinuous: plasmoid.configuration.isContinuous
     property bool hideTooltip: false // hide tooltip after action
     property bool showHoverBg: plasmoid.configuration.showHoverBg
     property int hoverBgRadius: plasmoid.configuration.hoverBgRadius
@@ -373,6 +374,24 @@ PlasmoidItem {
             }
         }
     }
+    
+    property var oldX: 0
+    property var dragX: dragHandler.xAxis.activeValue
+    
+    onDragXChanged: {
+        var diff = dragX - oldX
+        if (isContinuous) {
+            if (diff < 0) {
+                // runAction(mouseWheelUpAction, mouseWheelUpCommand, mouseWheelUpAppUrl)
+                runAction(mouseDragRightAction, mouseDragRightCommand, mouseDragRightAppUrl)
+            }
+            if (diff > 0) {
+                // runAction(mouseWheelDownAction, mouseWheelDownCommand, mouseWheelDownAppUrl)
+                runAction(mouseDragLeftAction, mouseDragLeftCommand, mouseDragLeftAppUrl)
+            }
+        }
+        oldX = dragX
+    }    
 
     RowLayout {
         anchors.centerIn: parent
@@ -458,28 +477,30 @@ PlasmoidItem {
     function runDragAction() {
         btn = ''
         dragging = false
-        printLog `Drag end: ${endPos}`
-        const dragDirection = getDragDirection(startPos, endPos)
-        printLog `Drag direction ${dragDirection}`
-        switch (dragDirection) {
-            case "up":
-                dragInfo = qsTr('Drag up')
-                runAction(mouseDragUpAction, mouseDragUpCommand, mouseDragUpAppUrl)
-                break
-            case "down":
-                dragInfo = qsTr('Drag down')
-                runAction(mouseDragDownAction, mouseDragDownCommand, mouseDragDownAppUrl)
-                break
-            case "left":
-                dragInfo = qsTr('Drag left')
-                runAction(mouseDragLeftAction, mouseDragLeftCommand, mouseDragLeftAppUrl)
-                break
-            case "right":
-                dragInfo = qsTr('Drag right')
-                runAction(mouseDragRightAction, mouseDragRightCommand, mouseDragRightAppUrl)
-                break
-            default:
-                dragInfo = ''
+        if (!isContinuous) {
+            printLog `Drag end: ${endPos}`
+            const dragDirection = getDragDirection(startPos, endPos)
+            printLog `Drag direction ${dragDirection}`
+            switch (dragDirection) {
+                case "up":
+                    dragInfo = qsTr('Drag up')
+                    runAction(mouseDragUpAction, mouseDragUpCommand, mouseDragUpAppUrl)
+                    break
+                case "down":
+                    dragInfo = qsTr('Drag down')
+                    runAction(mouseDragDownAction, mouseDragDownCommand, mouseDragDownAppUrl)
+                    break
+                case "left":
+                    dragInfo = qsTr('Drag left')
+                    runAction(mouseDragLeftAction, mouseDragLeftCommand, mouseDragLeftAppUrl)
+                    break
+                case "right":
+                    dragInfo = qsTr('Drag right')
+                    runAction(mouseDragRightAction, mouseDragRightCommand, mouseDragRightAppUrl)
+                    break
+                default:
+                    dragInfo = ''
+            }
         }
     }
 
@@ -535,7 +556,7 @@ PlasmoidItem {
 
     Timer {
         id: singleTapTimer
-        interval: 300
+        interval: isContinuous? 1 : 300
         onTriggered: {
             btn = qsTr('Single clicked')
             if (mouseButton === Qt.MiddleButton) {
@@ -562,9 +583,11 @@ PlasmoidItem {
 
         onDoubleTapped: {
             singleTapTimer.stop()
-            printLog `Double tap detected!`
-            btn = qsTr('Double clicked')
-            runAction(doubleClickAction,doubleClickCommand,doubleClickAppUrl)
+            if (!isContinuous) {
+                printLog `Double tap detected!`
+                btn = qsTr('Double clicked')
+                runAction(doubleClickAction,doubleClickCommand,doubleClickAppUrl)
+            }
         }
 
         onLongPressed: {

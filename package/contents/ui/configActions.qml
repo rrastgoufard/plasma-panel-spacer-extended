@@ -52,6 +52,7 @@ KCM.SimpleKCM {
 
     property alias cfg_showTooltip: showTooltip.checked
     property alias cfg_scrollSensitivity: scrollSensitivity.value
+    property alias cfg_isContinuous: isContinuous.checked
 
     property bool isLoading: true
 
@@ -214,6 +215,23 @@ KCM.SimpleKCM {
                     toolTipText: "Higher values may help reducing repeated scrolling events on some devices"
                 }
             }
+            
+
+            RowLayout {
+                Kirigami.FormData.label: i18n("Continuous:")
+
+                CheckBox {
+                    id: isContinuous
+                    checked: cfg_isContinuous
+                    onCheckedChanged: {
+                        cfg_isContinuous = checked
+                    }
+                    text: i18n("Disable discrete drag events.")
+                }
+                KCM.ContextualHelpButton {
+                    toolTipText: "When continuous, disable discrete drag events and fire them continuously on mouse movement.  Note that only left/right drag are allowed, not up/down.  Also disable double click for higher single click response speed."
+                }                
+            }            
         }
         Button {
             text: i18n("Refresh actions")
@@ -240,6 +258,7 @@ KCM.SimpleKCM {
             }
 
             Components.GroupedActions {
+                visible: !cfg_isContinuous
                 id: doubleClick
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "doubleClickAction"
@@ -279,6 +298,7 @@ KCM.SimpleKCM {
 
 
             Components.GroupedActions {
+                visible: !cfg_isContinuous
                 id: dragUp
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "mouseDragUpAction"
@@ -289,6 +309,7 @@ KCM.SimpleKCM {
 
 
             Components.GroupedActions {
+                visible: !cfg_isContinuous
                 id: dragDown
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "mouseDragDownAction"
