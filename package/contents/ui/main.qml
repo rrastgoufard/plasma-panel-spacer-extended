@@ -492,29 +492,30 @@ PlasmoidItem {
         btn = ''
         dragging = false
         if (!isContinuous) {
-            printLog `Drag end: ${endPos}`
-            const dragDirection = getDragDirection(startPos, endPos)
-            printLog `Drag direction ${dragDirection}`
-            switch (dragDirection) {
-                case "up":
-                    dragInfo = qsTr('Drag up')
-                    runAction(mouseDragUpAction, mouseDragUpCommand, mouseDragUpAppUrl)
-                    break
-                case "down":
-                    dragInfo = qsTr('Drag down')
-                    runAction(mouseDragDownAction, mouseDragDownCommand, mouseDragDownAppUrl)
-                    break
-                case "left":
-                    dragInfo = qsTr('Drag left')
-                    runAction(mouseDragLeftAction, mouseDragLeftCommand, mouseDragLeftAppUrl)
-                    break
-                case "right":
-                    dragInfo = qsTr('Drag right')
-                    runAction(mouseDragRightAction, mouseDragRightCommand, mouseDragRightAppUrl)
-                    break
-                default:
-                    dragInfo = ''
-            }
+            return
+        }
+        printLog `Drag end: ${endPos}`
+        const dragDirection = getDragDirection(startPos, endPos)
+        printLog `Drag direction ${dragDirection}`
+        switch (dragDirection) {
+            case "up":
+                dragInfo = qsTr('Drag up')
+                runAction(mouseDragUpAction, mouseDragUpCommand, mouseDragUpAppUrl)
+                break
+            case "down":
+                dragInfo = qsTr('Drag down')
+                runAction(mouseDragDownAction, mouseDragDownCommand, mouseDragDownAppUrl)
+                break
+            case "left":
+                dragInfo = qsTr('Drag left')
+                runAction(mouseDragLeftAction, mouseDragLeftCommand, mouseDragLeftAppUrl)
+                break
+            case "right":
+                dragInfo = qsTr('Drag right')
+                runAction(mouseDragRightAction, mouseDragRightCommand, mouseDragRightAppUrl)
+                break
+            default:
+                dragInfo = ''
         }
     }
 
@@ -598,12 +599,13 @@ PlasmoidItem {
         }
 
         onDoubleTapped: {
-            if (doubleClickAllowed) {
-                singleTapTimer.stop()
-                printLog `Double tap detected!`
-                btn = qsTr('Double clicked')
-                runAction(doubleClickAction,doubleClickCommand,doubleClickAppUrl)
+            if (!doubleClickAllowed) {
+                return
             }
+            singleTapTimer.stop()
+            printLog `Double tap detected!`
+            btn = qsTr('Double clicked')
+            runAction(doubleClickAction,doubleClickCommand,doubleClickAppUrl)
         }
 
         onLongPressed: {
