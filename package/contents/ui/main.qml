@@ -384,28 +384,38 @@ PlasmoidItem {
     property var dragY: dragHandler.yAxis.activeValue
     
     onDragXChanged: {
-        let diff = 0
-        if (horizontal) {
-            diff = dragX - oldX
-        } else {
-            // Y increases downwards
-            diff = -(dragY - oldY) 
+        let diff = dragX - oldX
+        if (horizontal && isContinuous) {
+            continuousDrag(diff)
         }
-        
-        if (isContinuous) {
-            if (diff < 0) {
-                runAction(mouseDragLeftAction, mouseDragLeftCommand, mouseDragLeftAppUrl)
-            }
-            if (diff > 0) {
-                runAction(mouseDragRightAction, mouseDragRightCommand, mouseDragRightAppUrl)
-            }
+        oldX = dragX
+    }
+    
+    onDragYChanged: {
+        let diff = -(dragY - oldY) 
+        if (!horizontal && isContinuous) {
+            continuousDrag(diff)
         }
-        if (horizontal) {
-            oldX = dragX
-        } else {
-            oldY = dragY
+        oldY = dragY
+    }
+    
+    function continuousDrag(diff) {
+        // When panel is horizontal, use Left/Right
+        // actions as expected.  
+        // When panel is vertical, still use "Left/Right"
+        // actions, but these use the Y coordinate
+        // and have been relabeled to
+        // Up/Down actions in the configuration UI.        
+        // 
+        // Note that this only checks the sign of
+        // diff and not its magnitude
+        if (diff < 0) {
+            runAction(mouseDragLeftAction, mouseDragLeftCommand, mouseDragLeftAppUrl)
         }
-    }    
+        if (diff > 0) {
+            runAction(mouseDragRightAction, mouseDragRightCommand, mouseDragRightAppUrl)
+        }
+    }
 
     RowLayout {
         anchors.centerIn: parent
@@ -491,7 +501,7 @@ PlasmoidItem {
     function runDragAction() {
         btn = ''
         dragging = false
-        if (!isContinuous) {
+        if (isContinuous) {
             return
         }
         printLog `Drag end: ${endPos}`
