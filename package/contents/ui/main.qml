@@ -380,20 +380,31 @@ PlasmoidItem {
     
     property var oldX: 0
     property var dragX: dragHandler.xAxis.activeValue
+    property var oldY: 0
+    property var dragY: dragHandler.yAxis.activeValue
     
     onDragXChanged: {
-        var diff = dragX - oldX
+        let diff = 0
+        if (horizontal) {
+            diff = dragX - oldX
+        } else {
+            // Y increases downwards
+            diff = -(dragY - oldY) 
+        }
+        
         if (isContinuous) {
             if (diff < 0) {
-                // runAction(mouseWheelUpAction, mouseWheelUpCommand, mouseWheelUpAppUrl)
-                runAction(mouseDragRightAction, mouseDragRightCommand, mouseDragRightAppUrl)
-            }
-            if (diff > 0) {
-                // runAction(mouseWheelDownAction, mouseWheelDownCommand, mouseWheelDownAppUrl)
                 runAction(mouseDragLeftAction, mouseDragLeftCommand, mouseDragLeftAppUrl)
             }
+            if (diff > 0) {
+                runAction(mouseDragRightAction, mouseDragRightCommand, mouseDragRightAppUrl)
+            }
         }
-        oldX = dragX
+        if (horizontal) {
+            oldX = dragX
+        } else {
+            oldY = dragY
+        }
     }    
 
     RowLayout {

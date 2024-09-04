@@ -10,6 +10,8 @@ import "components" as Components
 
 KCM.SimpleKCM {
     id: root
+    property bool horizontal: Plasmoid.formFactor !== PlasmaCore.Types.Vertical
+    
     property alias cfg_singleClickAction: singleClick.configValue
     property alias cfg_singleClickCommand: singleClick.commandValue
     property alias cfg_singleClickAppUrl: singleClick.applicationUrlValue
@@ -231,7 +233,7 @@ KCM.SimpleKCM {
                     text: i18n("Disable discrete drag events.")
                 }
                 KCM.ContextualHelpButton {
-                    toolTipText: "When continuous, disable discrete drag events and fire them continuously on mouse movement.  Note that only left/right drag are allowed, not up/down.  Also disable double click for higher single click response speed."
+                    toolTipText: "When continuous, disable discrete drag events and fire them continuously on mouse movement.  Note that only the direction parallel to the panel is supported.  (Left/Right for horizontal panels, Up/Down for vertical panels.)"
                 }                
             }     
             
@@ -356,7 +358,7 @@ KCM.SimpleKCM {
                 id: dragLeft
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "mouseDragLeftAction"
-                sectionLabel: "Drag Left"
+                sectionLabel: horizontal || !cfg_isContinuous ? "Drag Left" : "Drag Down"
                 Kirigami.FormData.label: sectionLabel+":"
                 isLoading: root.isLoading
             }
@@ -365,7 +367,7 @@ KCM.SimpleKCM {
                 id: dragRight
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "mouseDragRightAction"
-                sectionLabel: "Drag Right"
+                sectionLabel: horizontal || !cfg_isContinuous ? "Drag Right" : "Drag Up"
                 Kirigami.FormData.label: sectionLabel+":"
                 isLoading: root.isLoading
             }
