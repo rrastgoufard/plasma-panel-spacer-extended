@@ -134,6 +134,7 @@ PlasmoidItem {
     property bool showHoverBg: plasmoid.configuration.showHoverBg
     property int hoverBgRadius: plasmoid.configuration.hoverBgRadius
     property int scrollSensitivity: plasmoid.configuration.scrollSensitivity
+    property bool isContinuous: plasmoid.configuration.isContinuous
 
     property bool bgFillPanel: plasmoid.configuration.bgFillPanel
     Plasmoid.constraintHints: bgFillPanel ? Plasmoid.CanFillArea : Plasmoid.NoHint
