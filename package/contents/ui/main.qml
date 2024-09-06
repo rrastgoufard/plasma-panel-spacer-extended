@@ -38,6 +38,7 @@ PlasmoidItem {
     property bool dragging: false
     property bool wasDoubleClicked: false
     // TODO make distance configurable instead??
+    property bool doubleClickAllowed: doubleClickAction[0] !== "Disabled"
     property int minDragDistance: horizontal ? root.height : root.width
     property var mouseButton: undefined
 
@@ -549,7 +550,7 @@ PlasmoidItem {
 
     Timer {
         id: singleTapTimer
-        interval: 300
+        interval: doubleClickAllowed ? 300 : 3
         onTriggered: {
             btn = qsTr('Single clicked')
             if (mouseButton === Qt.MiddleButton) {
@@ -575,6 +576,9 @@ PlasmoidItem {
         }
 
         onDoubleTapped: {
+            if (!doubleClickAllowed) {
+                return
+            }
             singleTapTimer.stop()
             printLog `Double tap detected!`
             btn = qsTr('Double clicked')
